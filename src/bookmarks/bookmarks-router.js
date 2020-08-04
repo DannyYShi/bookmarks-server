@@ -1,8 +1,8 @@
 const express = require("express");
 const { v4: uuid } = require("uuid");
 const logger = require("../logger");
-const { bookmarks } = require("../store");
 const store = require("../store");
+const { isWebUri } = require('valid-url')
 
 const bookmarkRouter = express.Router();
 const bodyParser = express.json();
@@ -14,29 +14,27 @@ bookmarkRouter
   })
   .post(bodyParser, (req, res) => {
     const { title, url, description, rating } = req.body
-      if (!title) {
-        logger.error('Title is required');
-        return res.status(400).send('Title is required');
-      }
-      if (!url) {
-        logger.error('Url is required');
-        return res.status(400).send('Url is required');
-      }
-      if (!rating) {
-        logger.error('Rating is required');
-        return res.status(400).send('Rating is required');
-      }
-    })
-
+    if (!title) {
+      logger.error('Title is required');
+      return res.status(400).send('Title is required');
+    }
+    if (!url) {
+      logger.error('Url is required');
+      return res.status(400).send('Url is required');
+    }
+    if (!rating) {
+      logger.error('Rating is required');
+      return res.status(400).send('Rating is required');
+    }
     if (!Number.isInteger(rating) || rating < 0 || rating > 5) {
       logger.error(`Invalid rating '${rating}' supplied`);
       return res.status(400).send(`'rating' must be a number between 0 and 5`);
     }
-
     if (!isWebUri(url)) {
       logger.error(`Invalid url '${url}' supplied`);
       return res.status(400).send(`'url' must be a valid URL`);
     }
+  });
 
     const bookmark = { id: uuid(), title, url, description, rating };
 
@@ -51,7 +49,7 @@ bookmarkRouter
   });
 
 bookmarkRouter
-  .route("/bookmarks/:bookmark_id")
+  .route("/bookmark/:bookmark_id")
   .get((req, res) => {
     const { bookmark_id } = req.params;
 

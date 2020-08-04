@@ -5,6 +5,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const { NODE_ENV } = require("./config");
 const bookmarkRouter = require("./bookmarks/bookmarks-router");
+const logger = require("./logger");
 
 const app = express();
 
@@ -41,5 +42,6 @@ app.use(function errorHandler(error, req, res, next) {
 });
 
 app.use(cors());
+app.use(bookmarkRouter);
 
 module.exports = app;
