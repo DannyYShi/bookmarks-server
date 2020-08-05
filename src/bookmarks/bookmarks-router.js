@@ -2,7 +2,7 @@ const express = require("express");
 const { v4: uuid } = require("uuid");
 const logger = require("../logger");
 const store = require("../store");
-const { isWebUri } = require('valid-url')
+const { isWebUri } = require("valid-url");
 
 const bookmarkRouter = express.Router();
 const bodyParser = express.json();
@@ -13,18 +13,18 @@ bookmarkRouter
     res.json(store.bookmarks);
   })
   .post(bodyParser, (req, res) => {
-    const { title, url, description, rating } = req.body
+    const { title, url, description, rating } = req.body;
     if (!title) {
-      logger.error('Title is required');
-      return res.status(400).send('Title is required');
+      logger.error("Title is required");
+      return res.status(400).send("Title is required");
     }
     if (!url) {
-      logger.error('Url is required');
-      return res.status(400).send('Url is required');
+      logger.error("Url is required");
+      return res.status(400).send("Url is required");
     }
     if (!rating) {
-      logger.error('Rating is required');
-      return res.status(400).send('Rating is required');
+      logger.error("Rating is required");
+      return res.status(400).send("Rating is required");
     }
     if (!Number.isInteger(rating) || rating < 0 || rating > 5) {
       logger.error(`Invalid rating '${rating}' supplied`);
@@ -36,17 +36,16 @@ bookmarkRouter
     }
   });
 
-    const bookmark = { id: uuid(), title, url, description, rating };
+const bookmark = { id: uuid(), title, url, description, rating };
 
-    store.bookmarks.push(bookmark);
+store.bookmarks.push(bookmark);
 
-    logger.info(`Bookmark with id ${bookmark.id} created`);
+logger.info(`Bookmark with id ${bookmark.id} created`);
 
-    res
-      .status(201)
-      .location(`http://localhost:8000/bookmarks/${bookmark.id}`)
-      .json(bookmark);
-  });
+res
+  .status(201)
+  .location(`http://localhost:8000/bookmarks/${bookmark.id}`)
+  .json(bookmark);
 
 bookmarkRouter
   .route("/bookmark/:bookmark_id")
